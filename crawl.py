@@ -51,13 +51,15 @@ def getHTMLdocument(url):
 
 link = []
 domain = "https://www.anphatpc.com.vn"
-for i in range(1,4):
+for i in range(1,2):
     url_to_scrape = 'https://www.anphatpc.com.vn/may-tinh-xach-tay-laptop.html?page=%i' %i
     html_document = getHTMLdocument(url_to_scrape)
     soup = BeautifulSoup(html_document, 'html.parser')
     divs = soup.find_all("div", {"class": "p-item js-p-item"})
     for div_name in divs:
         link.append(domain+div_name.find('a', {'class': 'p-img'}).get("href"))
+
+list=[]
 
 for i in range(len(link)):
     html = getHTMLdocument(link[i])
@@ -70,33 +72,38 @@ for i in range(len(link)):
 
     for line in table.findAll('tr'):
         for i in range(len(line.findAll('td'))):
-            if line.findAll('td')[i].find("span").get_text().strip() == "Tên sản phẩm":
-                try:
-                    name = line.findAll('td')[i+1].get_text().strip()
-                    laptop.set_name(name)
-                except:
-                    continue
-            elif line.findAll('td')[i].find("span").get_text().strip() == "Bộ vi xử lý" or line.findAll('td')[i].find("span").get_text().strip() == "Công nghệ CPU":
-                try:
-                    chip = line.findAll('td')[i+1].get_text().strip()
-                    laptop.set_chip(chip)
-                except:
-                    continue
-            elif line.findAll('td')[i].find("span").get_text().strip() == "Màn hình" or line.findAll('td')[i].find("span").get_text().strip() == "Kích thước màn hình":
-                try:
-                    monitor = line.findAll('td')[i+1].get_text().strip()
-                    laptop.set_monitor(monitor)
-                except:
-                    continue
-            elif line.findAll('td')[i].find("span").get_text().strip() == "Xuất xứ" or line.findAll('td')[i].find("span").get_text().strip() == "Xuất Xứ":
-                try:
-                    origin = line.findAll('td')[i+1].get_text().strip()
-                    laptop.set_origin(origin)
-                except:
-                    continue
+            try:
+                if line.findAll('td')[i].find("span").get_text().strip() == "Tên sản phẩm":
+                    try:
+                        name = line.findAll('td')[i+1].get_text().strip()
+                        laptop.set_name(name)
+                    except:
+                        continue
+                elif line.findAll('td')[i].find("span").get_text().strip() == "Bộ vi xử lý" or line.findAll('td')[i].find("span").get_text().strip() == "Công nghệ CPU":
+                    try:
+                        chip = line.findAll('td')[i+1].get_text().strip()
+                        laptop.set_chip(chip)
+                    except:
+                        continue
+                elif line.findAll('td')[i].find("span").get_text().strip() == "Màn hình" or line.findAll('td')[i].find("span").get_text().strip() == "Kích thước màn hình":
+                    try:
+                        monitor = line.findAll('td')[i+1].get_text().strip()
+                        laptop.set_monitor(monitor)
+                    except:
+                        continue
+                elif line.findAll('td')[i].find("span").get_text().strip() == "Xuất xứ" or line.findAll('td')[i].find("span").get_text().strip() == "Xuất Xứ":
+                    try:
+                        origin = line.findAll('td')[i+1].get_text().strip()
+                        laptop.set_origin(origin)
+                    except:
+                        continue
+            except:
+                continue
 
-    json_object = json.dumps(laptop.__dict__)
-
+    list.append(json)
     # Writing to sample.json
-    with open("sample.json", "w") as outfile:
-        outfile.write(json_object)
+
+json_string = json.dumps(list)
+print(json_string)
+with open("sample.json", "w") as outfile:
+    outfile.write(json_string)
