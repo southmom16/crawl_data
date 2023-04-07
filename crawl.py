@@ -1,4 +1,6 @@
 import sys
+from typing import TextIO
+
 from bs4 import BeautifulSoup
 import urllib.request
 import requests
@@ -8,13 +10,6 @@ import json
 
 
 class Computer:
-
-
-    def __init__(self, name="", chip="", monitor="", origin=""):
-        self.name = name
-        self.chip = chip
-        self.monitor = monitor
-        self.origin = origin
 
     def get_name(self):
         return self.name
@@ -40,6 +35,14 @@ class Computer:
     def set_origin(self, origin):
         self.origin = origin
 
+
+def encoder_computer(computer):
+    if isinstance(computer, Computer):
+        return {'name': computer.name, 'chip': computer.chip, 'monitor': computer.monitor, 'origin': computer.origin}
+
+    raise TypeError(f'Object {computer} is not of Computer.')
+
+
 # function to extract html document from given url
 def getHTMLdocument(url):
 
@@ -51,7 +54,7 @@ def getHTMLdocument(url):
 
 link = []
 domain = "https://www.anphatpc.com.vn"
-for i in range(1,2):
+for i in range(1,18):
     url_to_scrape = 'https://www.anphatpc.com.vn/may-tinh-xach-tay-laptop.html?page=%i' %i
     html_document = getHTMLdocument(url_to_scrape)
     soup = BeautifulSoup(html_document, 'html.parser')
@@ -100,10 +103,11 @@ for i in range(len(link)):
             except:
                 continue
 
-    list.append(json)
+    list.append(laptop)
     # Writing to sample.json
 
-json_string = json.dumps(list)
-print(json_string)
 with open("sample.json", "w") as outfile:
-    outfile.write(json_string)
+    for x in list:
+        json_string = json.dumps(x, default=encoder_computer, indent=4)
+        # with open("sample.json", "w") as outfile:
+        outfile.write(json_string+"\n")

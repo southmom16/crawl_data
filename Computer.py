@@ -1,7 +1,7 @@
 class Computer:
 
 
-    def __init__(self, name="", chip="", monitor="", origin=""):
+    def __init__(self, name, chip, monitor, origin):
        self.name = name
        self.chip = chip
        self.monitor = monitor
